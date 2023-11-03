@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Гра в Бал</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+ 
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      background-image: linear-gradient(rgba(91, 8, 102, 0.5), rgba(11, 41, 151, 0.5));
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background-color: rgba(131, 73, 201, 0.126); 
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 60px rgb(0, 0, 0); 
+    }
+
+    h1 {
+      font-size: 36px;
+      margin: 10px;
+    }
+
+    p {
+      font-size: 18px;
+      margin: 10px;
+    }
+
+    input[type="text"] {
+      width: 250px;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #000000;
+      border-radius: 5px;
+      text-align: center; 
+      background-color: rgba(6, 6, 6, 0.326);  
+      font-size: 26px;
+    }
+
+    #result {
+      background-color: rgba(6, 6, 6, 0.326);  
+      padding: 10px;
+      border: 1px solid #000000;
+      border-radius: 5px;
+      margin: 20px;
+      font-size: 20px;
+      color: #333;
+    }
+
+    button {
+      background-color: #bea8c4fd;
+      color: #333;
+      border: none;
+      padding: 12px 24px;
+      margin: 10px 5px;
+      font-size: 18px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #FFFAAA;
+    }
+
+    #fireworks-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .firework {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background: #FFD700;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: explode 1s ease-out infinite;
+    }
+
+    @keyframes explode {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(0.1);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+    <div class="row">
+        <div class="container col-12 col-md-75 col-lg-50">
+    <h1>Гра в Бал</h1>
+    <p>Введіть своє ім'я: <input type="text" id="playerName"></p>
+    <button onclick="startGame()">Почати гру</button>
+    <button onclick="nextRound()">Далі</button>
+    <p id="message"></p>
+    <p id="result"></p>
+    <p id="playerNumber"></p>
+    <p id="computerNumber"></p>
+    
+    <div id="fireworks-container"></div>
+
+  </div>
+
+  <script>
+    let playerName = "";
+    let playerScore = 0;
+    let computerScore = 0;
+    let roundNumber = 0;
+    let playerNumber = 0;
+    let computerNumber = 0;
+
+    function startGame() {
+      playerName = document.getElementById("playerName").value;
+
+      if (playerName == "") {
+        document.getElementById("message").textContent = "Будь ласка, введіть ваше ім'я!";
+        return;
+      }
+
+      document.getElementById("message").textContent = "";
+      playerScore = 0;
+      computerScore = 0;
+      roundNumber = 0;
+      playerNumber = 0;
+      computerNumber = 0;
+      document.getElementById("playerNumber").textContent = "";
+      document.getElementById("computerNumber").textContent = "";
+      document.getElementById("result").textContent = "";
+   
+    }
+
+    function nextRound() {
+      if (playerName == "") {
+        document.getElementById("message").textContent = "Будь ласка, введіть ваше ім'я!";
+        return;
+      }
+
+      const playerNumber = Math.floor(Math.random() * 6) + 1;
+      const computerNumber = Math.floor(Math.random() * 6) + 1;
+
+      
+      document.getElementById("playerNumber").textContent = `${playerName} згенерувало число: ${playerNumber}`;
+      document.getElementById("computerNumber").textContent = `Комп'ютеру згенерувало число: ${computerNumber}`;
+
+      // Визначення результату
+      let result = "Нічия";
+      if (playerNumber > computerNumber) {
+        result = `${playerName} виграв раунд!`;
+        playerScore++;
+      } else if (playerNumber < computerNumber) {
+        result = "Комп'ютер виграв раунд!";
+        computerScore++;
+      }
+
+
+      document.getElementById("result").textContent = `Раунд ${roundNumber + 1}: ${playerName} (${playerScore}), Комп'ютер (${computerScore}) - ${result}`;
+
+     
+      roundNumber++;
+
+      if (playerScore == 3) {
+        document.getElementById("result").textContent = `${playerName} виграв гру!`;
+        displayFireworks();
+      } else if (computerScore == 3) {
+        document.getElementById("result").textContent = "Комп'ютер виграв гру!";
+        displayFireworks();
+      }
+    }
+
+    function displayFireworks() {
+      const container = document.getElementById("fireworks-container");
+      for (let i = 0; i < 250; i++) {
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
+        const firework = document.createElement("div");
+        firework.className = "firework";
+        firework.style.left = `${x}px`;
+        firework.style.top = `${y}px`;
+        container.appendChild(firework);
+      }
+        
+      setTimeout(() => {
+        location.reload();
+      }, 5000); 
+    }
+    
+  </script>
+</body>
+</html>
+
+
+
